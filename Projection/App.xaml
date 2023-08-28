@@ -1,0 +1,127 @@
+﻿<Application x:Class="Projection.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Projection"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+
+            <!--Style pour les viewbox-->
+            <Style TargetType="Viewbox" x:Key="Viewbox">
+                <Setter Property="Stretch" Value="Uniform"/>
+                <Setter Property="VerticalAlignment" Value="Stretch"/>
+                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            </Style>
+
+            <!--Template pour rendre le contenu du bouton agrandissable-->
+            <ControlTemplate TargetType="Button" x:Key="ScalableButton">
+                <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                    <Viewbox Style="{StaticResource Viewbox}">
+                        <ContentPresenter Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Viewbox>
+                </Border>
+            </ControlTemplate>
+
+            <!--Template pour rendre le texte agrandissable-->
+            <ControlTemplate TargetType="Label" x:Key="ScalableLabel">
+                <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                    <Viewbox Style="{StaticResource Viewbox}">
+                        <ContentPresenter Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Viewbox>
+                </Border>
+            </ControlTemplate>
+
+            <!--Style pour les boutons pour ajouter des fichiers-->
+            <Style TargetType="Button" x:Key="AddButton">
+                <Setter Property="Background" Value="#4ebc3b"/>
+                <Setter Property="Margin" Value="4"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="5*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="2*"/>
+                                        <RowDefinition Height="5*"/>
+                                        <RowDefinition Height="2*"/>
+                                    </Grid.RowDefinitions>
+                                    <Viewbox Grid.Column="1" Grid.Row="1" Style="{StaticResource Viewbox}">
+                                        <Path Data="M0,5 H10 M5,0 V10" StrokeThickness="3" Stretch="Uniform" Stroke="White"/>
+                                    </Viewbox>
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#1fc902"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!--Style pour les titres de sections-->
+            <Style TargetType="Label" x:Key="Title">
+                <Setter Property="FontFamily" Value="Cambria"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Template" Value="{StaticResource ScalableLabel}"/>
+            </Style>
+
+            <!--Style pour les boutons pour montrer/cacher les éléments-->
+            <Style TargetType="Button" x:Key="ShowStateButton">
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Background" Value="Green"/>
+                <Setter Property="FontFamily" Value="Cambria"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Padding" Value="5"/>
+                <Setter Property="Template" Value="{StaticResource ScalableButton}"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True"/>
+                </Style.Triggers>
+            </Style>
+
+            <!--Style pour les boutons pour contrôler le type de multimedia-->
+            <Style TargetType="Button" x:Key="Tab">
+                <Setter Property="Margin" Value="2 10 2 10"/>
+                <Setter Property="BorderBrush" Value="Black"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="FontFamily" Value="Cambria"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Padding" Value="5"/>
+                <Setter Property="Template" Value="{StaticResource ScalableButton}"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True"/>
+                </Style.Triggers>
+            </Style>
+
+            <!--Style pour les bords-->
+            <Style TargetType="Border" x:Key="GridBorder">
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderBrush" Value="LightGray"/>
+                <Setter Property="Margin" Value="5"/>
+            </Style>
+            
+            <!--Style pour un bouton normal-->
+            <Style TargetType="Button" x:Key="GenericButton">
+                <Setter Property="FontFamily" Value="Cambria"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Padding" Value="5"/>
+                <Setter Property="BorderBrush" Value="Gray"/>
+                <Setter Property="Template" Value="{StaticResource ScalableButton}"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="LightBlue"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

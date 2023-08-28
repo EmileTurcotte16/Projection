@@ -1,0 +1,254 @@
+﻿<Window x:Class="Projection.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Projection"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="720" Width="1280" WindowState="Maximized" ResizeMode="CanResize"  MinHeight="720" MinWidth="1280">
+
+    <Window.Resources>
+        <!--Template pour les listes de fichier-->
+        <DataTemplate x:Key="FileListItem">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MinWidth="190"/>
+                    <ColumnDefinition  Width="25" MinWidth="25" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="{Binding Name}"/>
+                <Button Click="RemoveFile" Grid.Column="1" Content="X"/>
+            </Grid>
+        </DataTemplate>
+
+        <!--Style pour les éléments d'une liste de fichiers-->
+        <Style TargetType="ListBoxItem" x:Key="FileListItemStyle">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="AllowDrop" Value="True"/>
+            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ChangeStartPoint"/>
+            <EventSetter Event="Drop" Handler="FileDropped"/>
+            <EventSetter Event="MouseDoubleClick" Handler="FileDoubleClick"/>
+        </Style>
+
+        <!--Style pour la liste de fichier-->
+        <Style TargetType="ListBox" x:Key="FileListStyle">
+            <EventSetter Event="PreviewMouseMove" Handler="PreviewFileDrop"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="4*"/>
+        </Grid.RowDefinitions>
+
+        <!--Excel-->
+        <Border Grid.RowSpan="2" Style="{StaticResource ResourceKey=GridBorder}">
+            <Grid Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="5*"/>
+                </Grid.RowDefinitions>
+
+                <Label Style="{StaticResource ResourceKey=Title}" Content="Excel"/>
+
+                <!--Liste des fichiers ajoutés-->
+                <ListBox Style="{StaticResource FileListStyle}" ItemContainerStyle="{StaticResource FileListItemStyle}" ItemTemplate="{StaticResource FileListItem}" x:Name="ExcelList" Margin="0 4 0 0" Grid.Row="1"/>
+            </Grid>
+        </Border>
+
+        <!--Multimedia/Arrière-plan-->
+        <Border Style="{StaticResource ResourceKey=GridBorder}" Grid.Row="2" Grid.RowSpan="2">
+            <Grid Margin="5" Grid.Row="1" Grid.RowSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="4*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="16*"/>
+                </Grid.RowDefinitions>
+
+                <!--Changer pour un power-point-->
+                <Button Content="Power-point" Click="ChangeToPpt" x:Name="Ppt" Style="{StaticResource ResourceKey=Tab}" Background="Red" Grid.ColumnSpan="2"/>
+
+                <!--Changer pour une image-->
+                <Button Content="Image" Click="ChangeToImg" x:Name="Img" Style="{StaticResource ResourceKey=Tab}" Background="Blue" Grid.Column="2" Grid.ColumnSpan="2" BorderThickness="5"/>
+
+                <!--Changer pour une vidéo-->
+                <Button Content="Vidéo" Click="ChangeToVid" x:Name="Vid" Style="{StaticResource ResourceKey=Tab}" Background="Green" Grid.Column="4" Grid.ColumnSpan="2"/>
+
+                <!--Mode sélectionné (Ppt/Img/Vid)-->
+                <Label Grid.Row="1" Grid.ColumnSpan="6" x:Name="Tab" Style="{StaticResource ResourceKey=Title}" Content="Image" />
+
+                <!--Pour le power-point: Page précédente-->
+                <Button Visibility="Hidden" x:Name="Previous" Margin="15 0" Grid.Row="2" Grid.ColumnSpan="3" Style="{StaticResource GenericButton}">
+                    <Path Data="M 410.312 454.729 151.767 244.996 410.312 35.271 381.693 0 79.688 244.996 381.693 490 Z" Fill="Black"/>
+                </Button>
+
+                <!--Pour le power-point: Page suivante-->
+                <Button Visibility="Hidden" x:Name="Next" Margin="15 0" Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="3" Style="{StaticResource GenericButton}">
+                    <Path Data="M 106.601 490 412.15 245.004 106.601 0 77.85 35.856 338.702 245.004 77.85 454.159 Z" Fill="Black"/>
+                </Button>
+
+                <!--Liste des fichiers ppt ajoutés-->
+                <ListBox Style="{StaticResource FileListStyle}" ItemContainerStyle="{StaticResource FileListItemStyle}" ItemTemplate="{StaticResource FileListItem}" x:Name="PptList" Visibility="Hidden" Margin="0 5 0 0" Grid.Row="3" Grid.ColumnSpan="6"/>
+
+                <!--Liste des fichiers images ajoutés-->
+                <ListBox Style="{StaticResource FileListStyle}" ItemContainerStyle="{StaticResource FileListItemStyle}" ItemTemplate="{StaticResource FileListItem}" x:Name="ImgList" Visibility="Visible" Margin="0 5 0 0" Grid.Row="3" Grid.ColumnSpan="6"/>
+
+                <!--Liste des fichiers vidéos ajoutés-->
+                <ListBox Style="{StaticResource FileListStyle}" ItemContainerStyle="{StaticResource FileListItemStyle}" ItemTemplate="{StaticResource FileListItem}" x:Name="VidList" Visibility="Hidden" Margin="0 5 0 0" Grid.Row="3" Grid.ColumnSpan="6"/>
+            </Grid>
+        </Border>
+
+        <!--Prochaine image à présenter-->
+        <Grid x:Name="NextFrame" Grid.Column="1" Grid.RowSpan="2" Background="Black">
+            <local:Presenter x:Name="NextPresenter"/>
+        </Grid>
+
+        <!--Barre de contrôle-->
+        <Grid Margin="10" Grid.Row="2" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <!--Bouton pour ajouter des fichiers-->
+            <Button Margin="15 0" Click="AddFile" Style="{StaticResource AddButton}"/>
+
+            <!--Montrer/cacher Excel-->
+            <Button Content="Montrer Excel" Click="ChangeShowExcel" Style="{StaticResource ResourceKey=ShowStateButton}" Margin="10 0 2 0" Grid.Column="1"/>
+
+            <!--Montrer/cacher le multimedia-->
+            <Button Content="Montrer Multimedia" Click="ChangeShowMultimedia" Style="{StaticResource ResourceKey=ShowStateButton}" Margin="2 0 10 0" Grid.Column="2"/>
+
+            <!--Présenter l'image précédente-->
+            <Button Content="Back" Style="{StaticResource GenericButton}" Click="Back" Margin="10 0 2 0" Grid.Column="3"/>
+
+            <!--Présenter la prochaine image-->
+            <Button Content="Go" Style="{StaticResource GenericButton}" Click="Go" Margin="2 0 10 0" Grid.Column="4"/>
+
+            <!--Ouvrir la fenêtre de configuration-->
+            <Button Style="{StaticResource GenericButton}" Click="OpenSettingsWindow" Grid.Column="5" Margin="10 0">
+                <Path Data="M116.993,203.218c13.4-1.8,26.8,2.8,36.3,12.3l24,24l22.7-22.6l-32.8-32.7c-5.1-5.1-5.1-13.4,0-18.5s13.4-5.1,18.5,0
+			        l32.8,32.8l22.7-22.6l-24.1-24.1c-9.5-9.5-14.1-23-12.3-36.3c4-30.4-5.7-62.2-29-85.6c-23.8-23.8-56.4-33.4-87.3-28.8
+			        c-4.9,0.7-6.9,6.8-3.4,10.3l30.9,30.9c14.7,14.7,14.7,38.5,0,53.1l-19,19c-14.7,14.7-38.5,14.7-53.1,0l-31-30.9
+			        c-3.5-3.5-9.5-1.5-10.3,3.4c-4.6,30.9,5,63.5,28.8,87.3C54.793,197.518,86.593,207.218,116.993,203.218z M309.193,243.918l-22.7,22.6l134.8,134.8c5.1,5.1,5.1,13.4,0,18.5s-13.4,5.1-18.5,0l-134.8-134.8l-22.7,22.6l138.9,138.9
+			        c17.6,17.6,46.1,17.5,63.7-0.1s17.6-46.1,0.1-63.7L309.193,243.918z M361.293,153.918h59.9l59.9-119.7l-29.9-29.9l-119.8,59.8v59.9l-162.8,162.3l-29.3-29.2l-118,118
+			        c-24.6,24.6-24.6,64.4,0,89s64.4,24.6,89,0l118-118l-29.9-29.9L361.293,153.918z" Fill="Black"/>
+            </Button>
+        </Grid>
+
+        <!--Contrôle des effets-->
+        <Border Grid.Row="3" Grid.Column="1" Style="{StaticResource ResourceKey=GridBorder}">
+            <Grid Margin="5">
+                
+            </Grid>
+        </Border>
+
+        <!--Image présentée en ce moment-->
+        <Grid x:Name="CurrentFrame" Margin="5" Background="Black" Grid.Column="3">
+            <local:Presenter x:Name="CurrentPresenter"/>
+        </Grid>
+
+        <!--Contrôle de l'intensité de l'image-->
+        <Border Style="{StaticResource ResourceKey=GridBorder}" Grid.Column="3" Grid.Row="1">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.ColumnSpan="3" Style="{StaticResource ResourceKey=Title}" Content="Master"/>
+
+                <!--Intensité en ce moment-->
+                <Label Content="100%" Grid.Row="2" Grid.Column="1" x:Name="MasterValue" Style="{StaticResource Title}"/>
+
+                <!--Slider pour contrôler l'intensité-->
+                <Viewbox Margin="10 10" Grid.Row="1" Grid.ColumnSpan="3" Stretch="Fill">
+                    <Slider ValueChanged="MasterValueChanged" x:Name="Master" Value="10" Minimum="0" Maximum="10" Width="200" />
+                </Viewbox>
+
+                <!--Mettre l'intensité à 0%-->
+                <Button Content="0%" Style="{StaticResource GenericButton}" Tag="0" Click="ChangeMasterValue" Grid.Row="2"/>
+
+                <!--Mettre l'intensité à 100%-->
+                <Button Content="100%" Tag="10" Style="{StaticResource GenericButton}" Click="ChangeMasterValue" Grid.Column="2" Grid.Row="2"/>
+            </Grid>
+        </Border>
+
+        <!--Audio-->
+        <Border Grid.Row="2" Grid.RowSpan="2" Grid.Column="2" Style="{StaticResource ResourceKey=GridBorder}">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="16*"/>
+                </Grid.RowDefinitions>
+                
+                <MediaElement x:Name="AudioPlayer" LoadedBehavior="Manual" UnloadedBehavior="Manual" MediaOpened="AudioBegin" MediaEnded="AudioEnd"/>
+
+                <Label Grid.ColumnSpan="6" Style="{StaticResource ResourceKey=Title}" Content="Audio"/>
+
+                <!--Jouer/pauser l'audio-->
+                <Button Style="{StaticResource GenericButton}" Grid.Row="1" Click="PlayPauseAudio" Margin="5" Grid.ColumnSpan="2">
+                    <Path x:Name="AudioPlayImg" Data="M0 0 L0 64 L48 32 Z" Fill="Black"/>
+                </Button>
+
+                <Viewbox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="4" Stretch="Fill">
+                    <Slider x:Name="AudioVolume" Width="150" Minimum="0" Maximum="10" Value="10" ValueChanged="VolumeChanged"/>
+                </Viewbox>
+
+                <!--Position dans le temps de l'audio-->
+                <Label x:Name="AudioPosition" FontFamily="Cambria" Content="00:00" Grid.Row="2" Style="{StaticResource Title}"/>
+
+                <!--Slider pour contrôler la position dans le temps de l'audio-->
+                <Viewbox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Stretch="Fill">
+                    <Slider Minimum="0" x:Name="AudioSlider" ValueChanged="UpdatePos" Thumb.DragStarted="AudioBeginChangePos" Thumb.DragCompleted="ChangeAudioPos" IsEnabled="False" Width="150"/>
+                </Viewbox>
+
+                <!--Durée de l'audio-->
+                <Label x:Name="AudioDuration" FontFamily="Cambria" Content="--:--" Grid.Column="5" Grid.Row="2" Style="{StaticResource Title}"/>
+
+                <!--Liste des fichiers audios ajoutés-->
+                <ListBox Style="{StaticResource FileListStyle}" ItemContainerStyle="{StaticResource FileListItemStyle}" ItemTemplate="{StaticResource FileListItem}" x:Name="AudioList" Margin="0 4 0 0" Grid.Row="3" Grid.ColumnSpan="6"/>
+            </Grid>
+        </Border>
+    </Grid>
+
+
+</Window>
